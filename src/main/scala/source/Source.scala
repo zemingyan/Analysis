@@ -13,6 +13,12 @@ import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
 import scala.util.Random
 
+/**
+  * TCP源数据
+  * 直接开启一个serverSocket 给连上的client 发送模拟数据
+  * 用于spark streaming 测试 这样数据就不用经过kafka 方便开发
+  * 实际无任何作用
+  */
 object Source {
   def main(args: Array[String]): Unit = {
     val apps = SQL("select * from temp").as(AppSample *)
@@ -24,9 +30,9 @@ object Source {
     val resolutions = SQL("select * from resolution").as(ResolutionSample *)
     val net_status = SQL("select * from net_status").as(NetStatusSample *)
     val today = Calendar.getInstance
-    today.set(Calendar.YEAR, 2017)
-    today.set(Calendar.MONTH, 9)
-    today.set(Calendar.DAY_OF_MONTH, 25)
+    today.set(Calendar.YEAR, 2016)
+    today.set(Calendar.MONTH, 4)
+    today.set(Calendar.DAY_OF_MONTH, 2)
     val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
     val serverSocket = new ServerSocket(9999)
@@ -39,8 +45,8 @@ object Source {
       if(today.get(Calendar.YEAR) == 2018 && today.get(Calendar.MONTH) == 4)
         System.exit(0)
       println(date)
-      today.add(Calendar.DAY_OF_MONTH, 1)
-      1 to (Random.nextInt(1500) + 5000) foreach { _ =>
+      today.add(Calendar.DAY_OF_MONTH, -1)
+      1 to (Random.nextInt(1000) + 500) foreach { _ =>
         val brand_model = getRandomBrand(brands)
         val user = getRandomUser(users)
         val data = DataBean(user.uid, user.province, user.city, date, getRandomAppUsage(apps), brand_model._1, brand_model._2, getRandomLanguage(languages), getRandomSystemVersion(systemVersions), getRandomResolution(resolutions), getRandomNetStatus(net_status), getRandomISP(ISPs))

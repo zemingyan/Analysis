@@ -12,7 +12,7 @@ import streaming.Util._
 object BetterStream {
   def main(args: Array[String]): Unit = {
     val conf = new SparkConf().setAppName("Analysis")
-    val ssc = new StreamingContext(conf, Seconds(50))
+    val ssc = new StreamingContext(conf, Seconds(20))
 
     ssc.checkpoint("hdfs://master:8020/checkpoint")
 
@@ -123,6 +123,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           } mapValues (_.toString))
         }
+        conn.close()
       }
     }
 
@@ -153,6 +154,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v ++ m.getOrElse(k, List[String]())).distinct)
           }.mapValues(_.mkString(",")))
         }
+        conn.close()
       }
     }
 
@@ -199,6 +201,7 @@ object BetterStream {
             } mapValues (_.toString))
           }
         }
+        conn.close()
       }
     }
 
@@ -250,6 +253,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0L)))
           }.mapValues(_.toString))
         }
+        conn.close()
       }
     }
 
@@ -268,6 +272,7 @@ object BetterStream {
             } mapValues (_.toString))
           }
         }
+        conn.close()
       }
     }
 
@@ -312,6 +317,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           } mapValues (_.toString))
         }
+        conn.close()
       }
     }
 
@@ -328,6 +334,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           } mapValues (_.toString))
         }
+        conn.close()
       }
     }
 
@@ -345,6 +352,7 @@ object BetterStream {
         part.foreach { user =>
           HbaseBean.insertRecord("USER", user._1, "usage_duration", user._2, user._3.toString)
         }
+        conn.close()
       }
     }
 
@@ -352,11 +360,12 @@ object BetterStream {
     val SOMEONE_DAYLY_USAGE = data.map(x => (x.user_id, x.date, x.apps.map(y => (y.package_name, y.endTime - y.beginTime)).groupBy(_._1).mapValues(_.map(_._2).sum)))
 
     SOMEONE_DAYLY_USAGE.foreachRDD { rdd =>
-      implicit val conn: Connection = HbaseBean.getNewConnection
       rdd.foreachPartition { part =>
+        implicit val conn: Connection = HbaseBean.getNewConnection
         part.foreach { user =>
           HbaseBean.insertRecord("USER", user._1, "usage_statistics", user._2, user._3.map(x => x._1 + ":" + x._2).mkString(","))
         }
+        conn.close()
       }
     }
 
@@ -370,6 +379,7 @@ object BetterStream {
         part.foreach { app =>
           HbaseBean.insertRecord("USER", app._1, "usage_times", app._2, app._3.toString)
         }
+        conn.close()
       }
     }
 
@@ -383,6 +393,7 @@ object BetterStream {
         part.foreach { user =>
           HbaseBean.insertRecord("USER", user._1, "usage_history", user._2, user._3.map(x => x._1 + ":" + x._2).mkString(","))
         }
+        conn.close()
       }
     }
 
@@ -402,6 +413,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           } mapValues (_.toString))
         }
+        conn.close()
       }
     }
 
@@ -434,6 +446,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           } mapValues (_.toString))
         }
+        conn.close()
       }
     }
 
@@ -454,6 +467,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           } mapValues (_.toString))
         }
+        conn.close()
       }
     }
 
@@ -493,6 +507,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           }.mapValues(_.toString))
         }
+        conn.close()
       }
     }
 
@@ -524,6 +539,7 @@ object BetterStream {
             case (m, (k, v)) => m + (k -> (v + m.getOrElse(k, 0)))
           }.mapValues(_.toString))
         }
+        conn.close()
       }
     }
 

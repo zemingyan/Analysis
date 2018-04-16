@@ -5,6 +5,11 @@ import org.apache.hadoop.hbase._
 import org.apache.hadoop.hbase.client._
 import org.apache.hadoop.hbase.util.Bytes
 
+
+/**
+  * 一个单例
+  * 封装了Hbase 的增删查改以及创建删除数据表
+  */
 object HbaseBean {
   val conf: Configuration = HBaseConfiguration.create
 
@@ -108,6 +113,22 @@ object HbaseBean {
     //    dropTable("USER")
     //    dropTable("USER_GROUP")
 
-    createTable("Test1", "brand", "model", "system_version", "resolution", "net_status", "language", "ISP")
+    //createTable("Test1", "brand", "model", "system_version", "resolution", "net_status", "language", "ISP")
+    val cur = System.currentTimeMillis()
+    println("开启扫描的时间戳为" + cur)
+    val table = connection.getTable(TableName.valueOf("AIV"))
+    val scan = new Scan
+    val scanner = table.getScanner(scan)
+    scanner forEach { rs =>
+      println(new String(rs.getRow))
+      rs.listCells forEach { cell =>
+        println(new String(CellUtil.cloneFamily(cell)) + " " +
+          new String(CellUtil.cloneQualifier(cell)) + " " +
+          new String(CellUtil.cloneValue(cell)))
+      }
+    }
+    val now = System.currentTimeMillis()
+    println("结束扫描的时间戳为" + now)
+    println("消耗的时间为:" + (now - cur) + "ms")
   }
 }

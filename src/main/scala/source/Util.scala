@@ -6,7 +6,12 @@ import anorm.SqlParser._
 import anorm._
 import play.api.libs.json.{Json, OFormat}
 
-
+/**
+  * Source单例的工具类
+  * 用于连接数据
+  * ORM映射
+  * 从mysql查询数据作为标本模拟数据
+  */
 object Util {
   private val url = "jdbc:mysql://localhost:3306/phonedata?useSSL=false&characterEncoding=utf-8"
   private val username = "root"
