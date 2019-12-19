@@ -13,8 +13,8 @@ import org.apache.hadoop.hbase.util.Bytes
 object HbaseBean {
   val conf: Configuration = HBaseConfiguration.create
 
-  conf.set("hbase.rootdir", "hdfs://master:8020/hbase")
-  conf.set("hbase.zookeeper.quorum", "master,slave1")
+  conf.set("hbase.rootdir", "hdfs://linux:8020/hbase")
+  conf.set("hbase.zookeeper.quorum", "linux:2181")
 
   //val executor: ExecutorService = Executors.newFixedThreadPool(5000)
 
@@ -67,7 +67,7 @@ object HbaseBean {
   def getNewConnection: Connection = {
     val hbaseConf = HBaseConfiguration.create
     hbaseConf.set("hbase.rootdir", "hdfs://master:8020/hbase")
-    hbaseConf.set("hbase.zookeeper.quorum", "master,slave1")
+    hbaseConf.set("hbase.zookeeper.quorum", "linux:2181")
     ConnectionFactory.createConnection(hbaseConf)
   }
 
@@ -99,36 +99,20 @@ object HbaseBean {
   }
 
   def main(args: Array[String]): Unit = {
-    //    createTable("AIV", "brand", "model", "system_version", "resolution", "net_status", "language", "ISP")
-    //    createTable("SINGLE_APP", "click_num", "version", "day_period", "week_period", "user", "duration")
-    //    createTable("APP_VERSION", "click_num")
-    //    createTable("APP_USAGE", "1", "2", "3", "4", "5", "6")
-    //    createTable("USER", "usage_duration", "usage_statistics", "usage_history", "hobby", "usage_times")
-    //    createTable("USER_GROUP", "usage", "hobby", "location", "period")
-    //getAll("USER_GROUP")
-    //    dropTable("AIV")
-    //    dropTable("APP_VERSION")
-    //    dropTable("APP_USAGE")
-    //    dropTable("SINGLE_APP")
-    //    dropTable("USER")
-    //    dropTable("USER_GROUP")
+//        createTable("AIV", "brand", "model", "system_version", "resolution", "net_status", "language", "ISP")
+//        createTable("SINGLE_APP", "click_num", "version", "day_period", "week_period", "user", "duration")
+//        createTable("APP_VERSION", "click_num")
+//        createTable("APP_USAGE", "1", "2", "3", "4", "5", "6")
+//        createTable("USER", "usage_duration", "usage_statistics", "usage_history", "hobby", "usage_times")
+//        createTable("USER_GROUP", "usage", "hobby", "location", "period")
+    //    getAll("USER_GROUP")
+//        dropTable("AIV")
+//        dropTable("APP_VERSION")
+//        dropTable("APP_USAGE")
+//        dropTable("SINGLE_APP")
+//        dropTable("USER")
+//        dropTable("USER_GROUP")
 
     //createTable("Test1", "brand", "model", "system_version", "resolution", "net_status", "language", "ISP")
-    val cur = System.currentTimeMillis()
-    println("开启扫描的时间戳为" + cur)
-    val table = connection.getTable(TableName.valueOf("AIV"))
-    val scan = new Scan
-    val scanner = table.getScanner(scan)
-    scanner forEach { rs =>
-      println(new String(rs.getRow))
-      rs.listCells forEach { cell =>
-        println(new String(CellUtil.cloneFamily(cell)) + " " +
-          new String(CellUtil.cloneQualifier(cell)) + " " +
-          new String(CellUtil.cloneValue(cell)))
-      }
-    }
-    val now = System.currentTimeMillis()
-    println("结束扫描的时间戳为" + now)
-    println("消耗的时间为:" + (now - cur) + "ms")
   }
 }
